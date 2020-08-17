@@ -1,0 +1,130 @@
+# A valid snippet should starts with:
+#
+#		snippet trigger_word [ "description" [ options ] ]
+#
+# and end with:
+#
+#		endsnippet
+#
+# Snippet options:
+#
+#		b - Beginning of line.
+#		i - In-word expansion.
+#		w - Word boundary.
+#		r - Regular expression
+#		e - Custom context snippet
+#		A - Snippet will be triggered automatically, when condition matches.
+#
+# Basic example:
+#
+#		snippet emitter "emitter properties" b
+#		private readonly ${1} = new Emitter<$2>()
+#		public readonly ${1/^_(.*)/$1/}: Event<$2> = this.$1.event
+#		endsnippet
+#
+# Online reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
+snippet incpbds
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/priority_queue.hpp>
+using namespace __gnu_pbds;
+endsnippet
+
+snippet pbdspq "priority_queue" b
+__gnu_pbds::priority_queue<${1:int}>;
+endsnippet
+
+snippet omap "rbtree map" b
+using ordered_map = tree<${1:int}, ${2:int}, less<${1:int}>, rb_tree_tag, tree_order_statistics_node_update>;
+endsnippet
+
+snippet oset "rbtree set" b
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+endsnippet
+
+snippet gphash "gp hash table" b
+gp_hash_table<${1:int}, ${2:int}> ${3};
+endsnippet
+
+snippet gphashint "gp hash table with custome hash" b
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+gp_hash_table<int, int,custom_hash> ${1};
+endsnippet
+
+snippet myhash "cunstom hash function" b
+struct myhash {
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        x ^= FIXED_RANDOM;
+        return x ^ (x >> 16);
+    }
+};
+endsnippet
+snippet mint "mod int" b
+template <int MOD>
+struct ModInt {
+    int val;
+    // constructor
+    ModInt(ll v = 0) : val(int(v % MOD)) {
+        if (val < 0) val += MOD;
+    };
+    // unary operator
+    ModInt operator+() const { return ModInt(val); }
+    ModInt operator-() const { return ModInt(MOD - val); }
+    ModInt inv() const { return this->pow(MOD - 2); }
+    // arithmetic
+    ModInt operator+(const ModInt& x) const { return ModInt(*this) += x; }
+    ModInt operator-(const ModInt& x) const { return ModInt(*this) -= x; }
+    ModInt operator*(const ModInt& x) const { return ModInt(*this) *= x; }
+    ModInt operator/(const ModInt& x) const { return ModInt(*this) /= x; }
+    ModInt pow(ll n) const {
+        auto x = ModInt(1);
+        auto b = *this;
+        while (n > 0) {
+            if (n & 1) x *= b;
+            n >>= 1;
+            b *= b;
+        }
+        return x;
+    }
+    // compound assignment
+    ModInt& operator+=(const ModInt& x) {
+        if ((val += x.val) >= MOD) val -= MOD;
+        return *this;
+    }
+    ModInt& operator-=(const ModInt& x) {
+        if ((val -= x.val) < 0) val += MOD;
+        return *this;
+    }
+    ModInt& operator*=(const ModInt& x) {
+        val = int(ll(val) * x.val % MOD);
+        return *this;
+    }
+    ModInt& operator/=(const ModInt& x) { return *this *= x.inv(); }
+    // compare
+    bool operator==(const ModInt& b) const { return val == b.val; }
+    bool operator!=(const ModInt& b) const { return val != b.val; }
+    // I/O
+    friend std::istream& operator>>(std::istream& is, ModInt& x) noexcept { return is >> x.val; }
+    friend std::ostream& operator<<(std::ostream& os, const ModInt& x) noexcept { return os << x.val; }
+};
+using mint = ModInt<int(${1:1e9+7})>;
+endsnippet
+snippet dir "dir vector" b
+const vector<pii> dir{{1,0},{-1,0},{0,1},{0,-1}};
+${0}
+endsnippet
